@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pour">
+<meta name="theme-color" content="#f6f1e9">
+<title>Pour</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2326211c'/%3E%3Cpath d='M32 26h36l-4 20a14 14 0 0 1-28 0z' fill='none' stroke='%23f6f1e9' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M50 60v14M40 74h20' stroke='%23f6f1e9' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Pour%22%2C%22short_name%22%3A%22Pour%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f6f1e9%22%2C%22theme_color%22%3A%22%23f6f1e9%22%2C%22start_url%22%3A%22.%22%7D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f1e9;--paper-2:#efe8dc;--card:#fbf8f2;
+    --ink:#26211c;--ink-soft:#5b524a;--ink-faint:#938678;
+    --line:#e3d9c9;--line-strong:#d3c5b0;
+    --d1:#cdd6dd;--d2:#9fb2bf;--d3:#6f8b9d;--d4:#47677c;--d5:#2c4759;
+    --green:#5f8d63;--green-bg:#e8f0e6;--yellow:#cf9a32;--yellow-bg:#f6ecd4;
+    --orange:#cf6f3c;--orange-bg:#f6e2d3;--red:#b1423a;--red-bg:#f3dad7;
+    --shadow:0 1px 2px rgba(40,30,20,.05),0 8px 24px rgba(40,30,20,.06);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--paper);
+    background-image:radial-gradient(120% 80% at 50% -10%, #fbf7ef 0%, var(--paper) 55%);
+    color:var(--ink);-webkit-font-smoothing:antialiased;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);min-height:100vh;
+  }
+  .wrap{max-width:540px;margin:0 auto;padding:18px 16px 130px;}
+  .hidden{display:none !important;}
+
+  /* ---------- auth / setup screens ---------- */
+  .center-screen{max-width:420px;margin:0 auto;padding:64px 24px;text-align:center;}
+  .center-screen .logo{
+    width:64px;height:64px;border-radius:18px;background:var(--ink);margin:0 auto 20px;
+    display:grid;place-items:center;
+  }
+  .center-screen .logo svg{width:34px;height:34px;}
+  .center-screen h1{font-family:'Fraunces',serif;font-weight:600;font-size:32px;margin:0 0 6px;letter-spacing:-.02em;}
+  .center-screen p{color:var(--ink-soft);font-size:14.5px;line-height:1.55;margin:0 0 26px;}
+  .gbtn{
+    display:inline-flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line-strong);
+    border-radius:12px;padding:13px 20px;font-family:'Hanken Grotesk';font-size:15px;font-weight:600;
+    color:#3c4043;cursor:pointer;box-shadow:var(--shadow);
+  }
+  .gbtn:active{transform:scale(.98);}
+  .gbtn svg{width:19px;height:19px;}
+  .setup-box{
+    text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-top:18px;font-size:13px;line-height:1.6;color:var(--ink-soft);
+  }
+  .setup-box code{background:var(--paper-2);padding:1px 6px;border-radius:5px;font-size:12px;}
+
+  /* ---------- header ---------- */
+  header.app{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px;}
+  .brand{display:flex;flex-direction:column;gap:1px;}
+  .brand h1{font-family:'Fraunces',serif;font-weight:600;font-size:34px;line-height:.95;margin:0;letter-spacing:-.02em;}
+  .brand .sub{font-size:12.5px;color:var(--ink-faint);letter-spacing:.06em;text-transform:uppercase;}
+  .top-actions{display:flex;gap:8px;}
+  .icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line-strong);
+    background:var(--card);color:var(--ink-soft);font-size:18px;cursor:pointer;display:grid;place-items:center;box-shadow:var(--shadow);}
+  .icon-btn:active{transform:scale(.95);}
+
+  .monthbar{display:flex;align-items:center;justify-content:space-between;margin:4px 0 14px;}
+  .monthbar .m{font-family:'Fraunces',serif;font-size:21px;font-weight:500;letter-spacing:-.01em;}
+  .nav{display:flex;gap:8px;}
+  .nav button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:16px;color:var(--ink-soft);cursor:pointer;}
+  .nav button:active{transform:scale(.94);}
+
+  .cal{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 12px 8px;box-shadow:var(--shadow);}
+  .dow{display:grid;grid-template-columns:14px repeat(7,1fr);gap:6px;margin-bottom:8px;}
+  .dow span{text-align:center;font-size:11px;font-weight:600;color:var(--ink-faint);letter-spacing:.05em;}
+  .dow .pad{width:14px;}
+  .weekrow{display:grid;grid-template-columns:14px repeat(7,1fr);gap:6px;align-items:stretch;margin-bottom:6px;}
+  .band{border-radius:5px;cursor:pointer;background:var(--line);}
+  .band.g{background:var(--green);}.band.y{background:var(--yellow);}.band.o{background:var(--orange);}.band.r{background:var(--red);}.band.empty{background:var(--line);}
+  .cell{aspect-ratio:1/1;border-radius:10px;border:1px solid var(--line);position:relative;cursor:pointer;overflow:hidden;}
+  .cell.out{opacity:.4;}
+  .cell .num{font-size:11px;font-weight:600;color:var(--ink-soft);padding:4px 0 0 5px;line-height:1;position:relative;z-index:2;}
+  .cell .amt{position:absolute;right:4px;bottom:3px;font-size:10px;font-weight:700;z-index:2;}
+  .cell.lv1{background:var(--d1);}.cell.lv2{background:var(--d2);}.cell.lv3{background:var(--d3);}.cell.lv4{background:var(--d4);}.cell.lv5{background:var(--d5);}
+  .cell.lv3 .num,.cell.lv4 .num,.cell.lv5 .num,.cell.lv3 .amt,.cell.lv4 .amt,.cell.lv5 .amt{color:#fff;}
+  .cell.lv1 .amt,.cell.lv2 .amt{color:var(--ink);}
+  .cell.today{box-shadow:0 0 0 2px var(--ink);border-color:var(--ink);}
+  .cell:active{transform:scale(.96);}
+
+  .legend{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:12px 2px 2px;font-size:11px;color:var(--ink-faint);}
+  .legend .scale{display:flex;align-items:center;gap:5px;}
+  .legend .sw{width:13px;height:13px;border-radius:3px;border:1px solid var(--line);}
+
+  .week-card{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .wc-top{padding:16px 16px 6px;display:flex;justify-content:space-between;align-items:flex-start;}
+  .wc-range{font-size:12.5px;color:var(--ink-faint);letter-spacing:.03em;}
+  .wc-pill{font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;letter-spacing:.03em;}
+  .pill-g{background:var(--green-bg);color:var(--green);}.pill-y{background:var(--yellow-bg);color:#a9781f;}
+  .pill-o{background:var(--orange-bg);color:#b15524;}.pill-r{background:var(--red-bg);color:var(--red);}
+  .wc-metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:6px 16px 16px;}
+  .metric .label{font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+  .metric .big{font-family:'Fraunces',serif;font-size:26px;font-weight:500;line-height:1;}
+  .metric .big small{font-size:13px;color:var(--ink-faint);font-family:'Hanken Grotesk';font-weight:500;}
+  .bar{height:7px;border-radius:99px;background:var(--paper-2);margin-top:9px;overflow:hidden;}
+  .bar > i{display:block;height:100%;border-radius:99px;transition:width .35s ease;}
+  .bar.cap > i{background:var(--ink);}.bar.cap.over > i{background:var(--red);}.bar.dry > i{background:var(--green);}
+  .wc-foot{border-top:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+  .wc-foot .t{font-size:13.5px;font-weight:600;}.wc-foot .chev{color:var(--ink-faint);font-size:18px;}
+
+  .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom));
+    background:var(--ink);color:var(--paper);border:none;border-radius:999px;padding:14px 24px;
+    font-family:'Hanken Grotesk';font-size:15px;font-weight:600;box-shadow:0 8px 24px rgba(40,30,20,.25);cursor:pointer;z-index:40;display:flex;align-items:center;gap:8px;}
+  .fab:active{transform:translateX(-50%) scale(.96);}
+
+  .overlay{position:fixed;inset:0;background:rgba(35,28,22,.4);backdrop-filter:blur(3px);z-index:100;display:none;align-items:flex-end;justify-content:center;}
+  .overlay.show{display:flex;}
+  .sheet{background:var(--paper);width:100%;max-width:540px;border-radius:22px 22px 0 0;max-height:92vh;overflow-y:auto;
+    padding:8px 18px calc(26px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.2);animation:rise .28s cubic-bezier(.2,.8,.2,1);}
+  @keyframes rise{from{transform:translateY(40px);opacity:.6;}to{transform:translateY(0);opacity:1;}}
+  .grab{width:38px;height:4px;background:var(--line-strong);border-radius:99px;margin:8px auto 14px;}
+  .sheet h2{font-family:'Fraunces',serif;font-weight:500;font-size:23px;margin:0 0 2px;letter-spacing:-.01em;}
+  .sheet .date-sub{color:var(--ink-faint);font-size:13px;margin-bottom:16px;}
+
+  /* day list */
+  .logged{list-style:none;padding:0;margin:0 0 6px;}
+  .logged li{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line);}
+  .lg-l{display:flex;align-items:center;gap:12px;}
+  .lg-emoji{font-size:22px;width:30px;text-align:center;}
+  .lg-name{font-weight:600;font-size:15px;}
+  .lg-meta{font-size:12px;color:var(--ink-faint);margin-top:1px;}
+  .lg-r{display:flex;align-items:center;gap:10px;}
+  .lg-std{font-family:'Fraunces',serif;font-size:17px;font-weight:500;}
+  .lg-del{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink-faint);font-size:15px;cursor:pointer;}
+  .empty-note{color:var(--ink-faint);font-size:13.5px;padding:14px 0 6px;text-align:center;}
+  .add-drink{width:100%;padding:14px;border-radius:13px;border:1px dashed var(--line-strong);background:transparent;color:var(--ink-soft);font-family:'Hanken Grotesk';font-size:14.5px;font-weight:600;cursor:pointer;margin-top:8px;}
+  .add-drink:active{transform:scale(.99);}
+
+  .day-total{display:flex;justify-content:space-between;align-items:center;margin:16px 0 2px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;}
+  .day-total .lbl{font-size:13px;color:var(--ink-soft);}
+  .day-total .val{font-family:'Fraunces',serif;font-size:22px;font-weight:500;}
+  .day-total .val small{font-size:12px;color:var(--ink-faint);font-family:'Hanken Grotesk';}
+
+  /* drink entry form */
+  .field{margin-bottom:16px;}
+  .field > .flabel{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px;}
+  .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .type-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;border-radius:12px;border:1px solid var(--line-strong);background:var(--card);cursor:pointer;}
+  .type-btn .te{font-size:23px;}
+  .type-btn .tn{font-size:11.5px;font-weight:600;color:var(--ink-soft);}
+  .type-btn.sel{border-color:var(--ink);background:var(--ink);}
+  .type-btn.sel .tn{color:var(--paper);}
+  .type-btn:active{transform:scale(.96);}
+
+  .vol-line{display:flex;gap:10px;}
+  .vol-line input{flex:1;}
+  .unit-toggle{display:flex;border:1px solid var(--line-strong);border-radius:11px;overflow:hidden;flex:0 0 auto;}
+  .unit-toggle button{padding:0 16px;border:none;background:var(--card);font-family:'Hanken Grotesk';font-size:14px;font-weight:600;color:var(--ink-faint);cursor:pointer;}
+  .unit-toggle button.on{background:var(--ink);color:var(--paper);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .num-field{width:100%;height:50px;border-radius:12px;border:1px solid var(--line-strong);background:var(--card);
+    text-align:left;padding:0 15px;font-size:17px;font-weight:600;font-family:'Hanken Grotesk';color:var(--ink);}
+  .num-field::placeholder{color:var(--ink-faint);font-weight:500;}
+  .num-field:focus{outline:none;border-color:var(--ink);}
+
+  .calc{display:flex;justify-content:space-between;align-items:center;margin:4px 0 2px;padding:15px 16px;border-radius:14px;background:var(--paper-2);border:1px solid var(--line);}
+  .calc .cl{font-size:13px;color:var(--ink-soft);}
+  .calc .cv{font-family:'Fraunces',serif;font-size:24px;font-weight:500;}
+  .calc .cv small{font-size:12px;color:var(--ink-faint);font-family:'Hanken Grotesk';}
+  .calc.warn{background:var(--red-bg);border-color:var(--red);}
+  .calc.warn .cv{color:var(--red);}
+
+  .btn-row{display:flex;gap:10px;margin-top:16px;}
+  .btn{flex:1;padding:14px;border-radius:13px;font-family:'Hanken Grotesk';font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);}
+  .btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .btn.primary:disabled{opacity:.4;}
+  .btn.ghost{background:transparent;color:var(--ink-soft);}
+  .btn:active{transform:scale(.98);}
+
+  /* health */
+  .risk-head{display:flex;align-items:center;gap:12px;margin:0 0 8px;}
+  .risk-dot{width:16px;height:16px;border-radius:5px;}
+  .risk-dot.g{background:var(--green);}.risk-dot.y{background:var(--yellow);}.risk-dot.o{background:var(--orange);}.risk-dot.r{background:var(--red);}
+  .risk-label{font-weight:700;font-size:15px;}
+  .risk-range{font-size:12.5px;color:var(--ink-faint);margin-left:auto;}
+  .hc-summary{font-size:14.5px;line-height:1.5;margin:8px 0 16px;}
+  .hc-section{margin-bottom:16px;}
+  .hc-section .h{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px;}
+  .hc-section ul{margin:0;padding-left:18px;}
+  .hc-section li{font-size:13.5px;line-height:1.55;color:var(--ink-soft);margin-bottom:4px;}
+  .age-box{background:var(--paper-2);border-radius:13px;padding:13px 15px;border:1px solid var(--line);}
+  .age-box p{font-size:13.5px;line-height:1.55;color:var(--ink-soft);margin:0;}
+  .disclaimer{font-size:11.5px;color:var(--ink-faint);line-height:1.5;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);}
+
+  .set-row{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--line);}
+  .set-row:last-child{border-bottom:none;}
+  .set-row .sl{font-size:14.5px;font-weight:500;}
+  .set-row .sd{font-size:12px;color:var(--ink-faint);margin-top:2px;}
+  .set-num{width:74px;height:40px;border-radius:10px;border:1px solid var(--line-strong);background:var(--card);text-align:center;font-size:16px;font-weight:600;font-family:'Hanken Grotesk';color:var(--ink);}
+  .ref-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);}
+  .ref-item:last-child{border-bottom:none;}
+  .ref-item .e{font-size:22px;width:28px;text-align:center;}
+  .ref-item .rt{font-size:14px;font-weight:600;}
+  .ref-item .rd{font-size:12.5px;color:var(--ink-faint);}
+  .intro{font-size:13.5px;line-height:1.55;color:var(--ink-soft);margin:0 0 14px;}
+  .who{font-size:12px;color:var(--ink-faint);margin-top:10px;text-align:center;}
+  .loading{text-align:center;padding:80px 0;color:var(--ink-faint);font-size:14px;}
+</style>
+</head>
+<body>
+
+<!-- SETUP screen (shown if Firebase config missing) -->
+<div id="setupScreen" class="center-screen hidden">
+  <div class="logo"><svg viewBox="0 0 100 100"><path d="M32 26h36l-4 20a14 14 0 0 1-28 0z" fill="none" stroke="#f6f1e9" stroke-width="4" stroke-linejoin="round"/><path d="M50 60v14M40 74h20" stroke="#f6f1e9" stroke-width="4" stroke-linecap="round"/></svg></div>
+  <h1>Almost there</h1>
+  <p>Paste your Firebase project config into <code>index.html</code> to finish setup.</p>
+  <div class="setup-box">
+    Find the <code>firebaseConfig</code> block near the bottom of the file and replace the placeholder values with the ones from your Firebase console (Project settings → your web app). Then enable <b>Google</b> sign-in and <b>Firestore</b>, add your GitHub Pages domain to Authorized domains, and reload.
+  </div>
+</div>
+
+<!-- SIGN-IN screen -->
+<div id="authScreen" class="center-screen hidden">
+  <div class="logo"><svg viewBox="0 0 100 100"><path d="M32 26h36l-4 20a14 14 0 0 1-28 0z" fill="none" stroke="#f6f1e9" stroke-width="4" stroke-linejoin="round"/><path d="M50 60v14M40 74h20" stroke="#f6f1e9" stroke-width="4" stroke-linecap="round"/></svg></div>
+  <h1>Pour</h1>
+  <p>A private log for tracking and visualizing your drinking, synced to your Google account.</p>
+  <button class="gbtn" id="googleBtn">
+    <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+    Continue with Google
+  </button>
+</div>
+
+<!-- MAIN app -->
+<div id="appScreen" class="wrap hidden">
+  <div class="loading">Loading your log…</div>
+</div>
+
+<button class="fab hidden" id="fabBtn">＋ Log today</button>
+
+<div class="overlay" id="dayOverlay"><div class="sheet" id="daySheet"></div></div>
+<div class="overlay" id="drinkOverlay"><div class="sheet" id="drinkSheet"></div></div>
+<div class="overlay" id="weekOverlay"><div class="sheet" id="weekSheet"></div></div>
+<div class="overlay" id="setOverlay"><div class="sheet" id="setSheet"></div></div>
+<div class="overlay" id="infoOverlay"><div class="sheet" id="infoSheet"></div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, setDoc, deleteDoc, onSnapshot, collection }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* ============================================================
+   >>> PASTE YOUR FIREBASE CONFIG HERE <<<
+   From Firebase console → Project settings → General → Your apps (Web).
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyDIptBEHJxOmkSwkd9mLBsd66RNdVLQ0r0",
+  authDomain: "drink-tracking-a4291.firebaseapp.com",
+  projectId: "drink-tracking-a4291",
+  storageBucket: "drink-tracking-a4291.firebasestorage.app",
+  messagingSenderId: "70254829744",
+  appId: "1:70254829744:web:dcdf67675b82f579181b75"
+};
+/* ============================================================ */
+
+const NEEDS_SETUP = Object.values(firebaseConfig).some(v => String(v).startsWith("PASTE_"));
+
+const TYPES = [
+  {key:'beer',    name:'Beer',    emoji:'🍺'},
+  {key:'wine',    name:'Wine',    emoji:'🍷'},
+  {key:'spirits', name:'Spirits', emoji:'🥃'},
+  {key:'cocktail',name:'Cocktail',emoji:'🍸'},
+];
+const TYPE_MAP = Object.fromEntries(TYPES.map(t=>[t.key,t]));
+const DEFAULTS = { weeklyCap:6, dryTarget:4 };
+const OZ_ML = 29.5735, ETHANOL = 0.789, STD_G = 13.45;
+
+let settings = {...DEFAULTS};
+let days = {};                 // { 'YYYY-MM-DD': { drinks:[{id,type,volume,unit,abv,servings,std}] } }
+let viewYear, viewMonth, uid=null;
+let db, auth;
+
+/* ---------- std drink math ---------- */
+function computeStd(volume, unit, abv, servings){
+  const ml = unit==='oz' ? volume*OZ_ML : volume;
+  const s = (ml * servings * (abv/100) * ETHANOL) / STD_G;
+  return isFinite(s) && s>0 ? s : 0;
+}
+function pad(n){return n<10?'0'+n:''+n;}
+function key(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmt(n){ n=Math.round(n*10)/10; return Number.isInteger(n)?String(n):n.toFixed(1); }
+function dayStd(k){ const e=days[k]; if(!e||!e.drinks) return 0; return e.drinks.reduce((a,x)=>a+(x.std||0),0); }
+function dailyLevel(s){ if(s<=0)return 0; if(s<=1)return 1; if(s<=2)return 2; if(s<=3)return 3; if(s<=4)return 4; return 5; }
+function bandFor(w){ if(w<=0)return null; if(w<=2)return'g'; if(w<=6)return'y'; if(w<=14)return'o'; return'r'; }
+const BAND_INFO={g:{label:'Low risk',range:'0–2 / week'},y:{label:'Moderate risk',range:'3–6 / week'},o:{label:'Increasingly high risk',range:'7–14 / week'},r:{label:'High risk',range:'15+ / week'}};
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOW=['S','M','T','W','T','F','S'];
+function startOfGrid(y,m){const f=new Date(y,m,1);const d=new Date(f);d.setDate(1-f.getDay());return d;}
+function sameYMD(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+
+/* ============================ FIRESTORE ============================ */
+function dayRef(k){ return doc(db,'users',uid,'days',k); }
+function settingsRef(){ return doc(db,'users',uid,'meta','settings'); }
+async function writeDay(k, drinks){
+  if(drinks.length===0){ await deleteDoc(dayRef(k)); }
+  else { await setDoc(dayRef(k), { drinks, updated: Date.now() }); }
+}
+async function writeSettings(){ await setDoc(settingsRef(), settings, {merge:true}); }
+
+function subscribe(){
+  onSnapshot(collection(db,'users',uid,'days'), snap=>{
+    const next={};
+    snap.forEach(docu=>{ next[docu.id]=docu.data(); });
+    days=next;
+    if(!document.getElementById('appScreen').classList.contains('hidden')) render();
+  });
+  onSnapshot(settingsRef(), docu=>{
+    if(docu.exists()){ settings={...DEFAULTS, ...docu.data()}; }
+    else { settings={...DEFAULTS}; }
+    if(!document.getElementById('appScreen').classList.contains('hidden')) render();
+  });
+}
+
+/* ============================ RENDER: MONTH ============================ */
+function render(){
+  const app=document.getElementById('appScreen');
+  const today=new Date();
+  const start=startOfGrid(viewYear,viewMonth);
+  let weeks=[]; let cur=new Date(start);
+  for(let w=0;w<6;w++){ let d=[]; for(let i=0;i<7;i++){d.push(new Date(cur));cur.setDate(cur.getDate()+1);} weeks.push(d); }
+  if(weeks.length===6 && !weeks[5].some(d=>d.getMonth()===viewMonth)) weeks.pop();
+
+  let html=`<header class="app">
+    <div class="brand"><h1>Pour</h1><div class="sub">drink log</div></div>
+    <div class="top-actions">
+      <button class="icon-btn" id="infoBtn">i</button>
+      <button class="icon-btn" id="setBtn">⚙</button>
+    </div></header>`;
+  html+=`<div class="monthbar"><div class="m">${MONTHS[viewMonth]} ${viewYear}</div>
+    <div class="nav"><button id="prevM">‹</button><button id="todayM">•</button><button id="nextM">›</button></div></div>`;
+  html+=`<div class="cal"><div class="dow"><span class="pad"></span>`;
+  for(const d of DOW) html+=`<span>${d}</span>`;
+  html+=`</div>`;
+  weeks.forEach((ds,wi)=>{
+    let ws=0; ds.forEach(d=>ws+=dayStd(key(d)));
+    const band=bandFor(ws)||'empty';
+    html+=`<div class="weekrow"><div class="band ${band}" data-week="${wi}"></div>`;
+    ds.forEach(d=>{
+      const k=key(d), std=dayStd(k), lv=dailyLevel(std);
+      let cls='cell'; if(d.getMonth()!==viewMonth)cls+=' out'; if(lv>0)cls+=' lv'+lv; if(sameYMD(d,today))cls+=' today';
+      html+=`<div class="${cls}" data-date="${k}"><span class="num">${d.getDate()}</span>${std>0?`<span class="amt">${fmt(std)}</span>`:''}</div>`;
+    });
+    html+=`</div>`;
+  });
+  html+=`<div class="legend"><div class="scale"><span>less</span>
+    <span class="sw" style="background:var(--d1)"></span><span class="sw" style="background:var(--d2)"></span>
+    <span class="sw" style="background:var(--d3)"></span><span class="sw" style="background:var(--d4)"></span>
+    <span class="sw" style="background:var(--d5)"></span><span>more</span></div></div>
+    <div class="legend">
+    <span style="display:flex;align-items:center;gap:5px"><span class="sw" style="background:var(--green)"></span>low</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="sw" style="background:var(--yellow)"></span>moderate</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="sw" style="background:var(--orange)"></span>high</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="sw" style="background:var(--red)"></span>very high</span></div></div>`;
+  html+=weekCardHTML(weeks,today);
+  app.innerHTML=html;
+  bindMonth(weeks);
+}
+function pickWeek(weeks,today){
+  let idx=weeks.findIndex(ds=>ds.some(d=>sameYMD(d,today)));
+  if(idx<0){for(let i=weeks.length-1;i>=0;i--){if(weeks[i].some(d=>dayStd(key(d))>0)){idx=i;break;}}}
+  if(idx<0)idx=0; return idx;
+}
+function weekCardHTML(weeks,today){ return renderWeekCard(weeks[pickWeek(weeks,today)],today,false); }
+function renderWeekCard(ds,today,asModal){
+  let ws=0,dry=0;
+  ds.forEach(d=>{const std=dayStd(key(d));ws+=std;if((d<=today||sameYMD(d,today))&&std===0)dry++;});
+  const band=bandFor(ws)||'g', info=BAND_INFO[band];
+  const first=ds[0],last=ds[6];
+  const range=`${MONTHS[first.getMonth()].slice(0,3)} ${first.getDate()} – ${MONTHS[last.getMonth()].slice(0,3)} ${last.getDate()}`;
+  const cap=settings.weeklyCap, capPct=Math.min(100,cap>0?(ws/cap)*100:0), over=ws>cap;
+  const dryPct=Math.min(100,settings.dryTarget>0?(dry/settings.dryTarget)*100:0);
+  let h=`<div class="wc-top"><div><div class="wc-range">This week · ${range}</div></div>
+    <div class="wc-pill pill-${band}">${info.label}</div></div>
+    <div class="wc-metrics">
+      <div class="metric"><div class="label">Standard drinks</div><div class="big">${fmt(ws)} <small>/ ${cap} cap</small></div>
+        <div class="bar cap ${over?'over':''}"><i style="width:${capPct}%"></i></div></div>
+      <div class="metric"><div class="label">Dry days</div><div class="big">${dry} <small>/ ${settings.dryTarget} goal</small></div>
+        <div class="bar dry"><i style="width:${dryPct}%"></i></div></div></div>`;
+  if(asModal){ return h+healthCardHTML(band); }
+  return `<div class="week-card">${h}<div class="wc-foot" id="openHealth"><span class="t">What ${fmt(ws)} drinks/week means for your health</span><span class="chev">›</span></div></div>`;
+}
+
+/* ============================ HEALTH CONTENT ============================ */
+const HEALTH={
+  g:{summary:`At 2 or fewer standard drinks a week you sit in the low-risk zone. You are likely to avoid most alcohol-related consequences, though Canada's guidance is clear that no amount of alcohol is risk-free.`,
+    risks:[`Risk of alcohol-attributable cancers and injury is low at this level, but not zero.`,`Even small amounts add a slight increase to colorectal and esophageal cancer risk, which is relevant for men.`],
+    age:`Your baseline risk of cancer and heart disease climbs naturally through your 40s, 50s and 60s regardless of drinking. Keeping intake here means alcohol adds very little on top of that rising baseline. Your body also clears alcohol more slowly as you age, so the same drink affects you more over time.`},
+  y:{summary:`Between 3 and 6 standard drinks a week, Canada's guidance notes the risk of developing several cancers, including colon cancer, begins to rise. Your 6-drink cap sits right at the top edge of this band.`,
+    risks:[`Increased risk of colorectal, esophageal, oral and liver cancers.`,`Alcohol is a direct contributor to high blood pressure, which becomes more common in men through midlife.`,`Men in this range show measurable increases in liver-related and colorectal risk specifically.`],
+    age:`The same weekly amount represents a larger absolute risk each decade, because baseline rates of cancer and cardiovascular disease climb with age and alcohol multiplies them. From your 40s on, slower metabolism and more frequent use of medications such as blood pressure or cholesterol drugs raise the odds of interactions.`},
+  o:{summary:`At 7 to 14 standard drinks a week you are in the increasingly-high-risk zone. Canada's guidance states that each additional drink in this range meaningfully raises the risk of heart disease and stroke, on top of mounting cancer risk.`,
+    risks:[`Notably higher risk of hypertension, heart disease and stroke.`,`Rising risk of alcohol-related liver disease, which men experience at higher absolute rates.`,`Elevated risk across multiple cancers (liver, colorectal, esophageal, oral).`],
+    age:`Cardiovascular risk compounds sharply here, since age is itself a primary driver of heart disease and stroke. Liver resilience declines with age, so sustained intake at this level does more damage in your 50s and 60s than the same intake would in your 30s.`},
+  r:{summary:`At 15 or more standard drinks a week the risk of serious harm is high and rises steeply with each additional drink.`,
+    risks:[`Substantially elevated risk of multiple cancers, cirrhosis and other liver disease.`,`High risk of heart disease, stroke and alcohol dependence.`,`This level carries the highest alcohol-attributable mortality, and men account for the majority of those deaths in Canada.`],
+    age:`The combination of cumulative lifetime exposure and rising age-related baseline risk makes this the most dangerous trajectory. Harms that may stay silent in your 30s, such as early liver damage or arterial changes, frequently become clinical events in later decades.`}
+};
+function healthCardHTML(band){
+  const info=BAND_INFO[band],c=HEALTH[band];
+  let h=`<div class="risk-head"><span class="risk-dot ${band}"></span><span class="risk-label">${info.label}</span><span class="risk-range">${info.range}</span></div>`;
+  h+=`<p class="hc-summary">${c.summary}</p>`;
+  h+=`<div class="hc-section"><div class="h">Key risks at this level</div><ul>`;
+  c.risks.forEach(r=>h+=`<li>${r}</li>`); h+=`</ul></div>`;
+  h+=`<div class="hc-section"><div class="h">As you get older</div><div class="age-box"><p>${c.age}</p></div></div>`;
+  h+=`<div class="disclaimer">Source: Canada's Guidance on Alcohol and Health (Canadian Centre on Substance Use and Addiction, 2023) and supporting epidemiology. A standard drink is 13.45 g of pure alcohol. This is general information tailored to broad patterns for men across age, not a personalized prediction or medical advice.</div>`;
+  return h;
+}
+
+/* ============================ DAY MODAL ============================ */
+let currentDay=null, dayDrinks=[];
+function openDay(k){
+  currentDay=k;
+  dayDrinks=(days[k]&&days[k].drinks?JSON.parse(JSON.stringify(days[k].drinks)):[]);
+  renderDay(); show('dayOverlay');
+}
+function renderDay(){
+  const [y,m,d]=currentDay.split('-').map(Number);
+  const dt=new Date(y,m-1,d);
+  const sub=dt.toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  let total=dayDrinks.reduce((a,x)=>a+(x.std||0),0);
+  let h=`<div class="grab"></div><h2>Drinks</h2><div class="date-sub">${sub}</div>`;
+  if(dayDrinks.length===0){
+    h+=`<div class="empty-note">Nothing logged yet for this day.</div>`;
+  } else {
+    h+=`<ul class="logged">`;
+    dayDrinks.forEach(x=>{
+      const t=TYPE_MAP[x.type]||{emoji:'🥤',name:x.type};
+      h+=`<li><div class="lg-l"><div class="lg-emoji">${t.emoji}</div>
+        <div><div class="lg-name">${t.name}</div>
+        <div class="lg-meta">${fmt(x.volume)} ${x.unit} · ${fmt(x.abv)}% · ×${fmt(x.servings)}</div></div></div>
+        <div class="lg-r"><span class="lg-std">${fmt(x.std)}</span>
+        <button class="lg-del" data-del="${x.id}">✕</button>
+        <button class="lg-del" data-edit="${x.id}">✎</button></div></li>`;
+    });
+    h+=`</ul>`;
+  }
+  h+=`<button class="add-drink" id="addDrink">＋ Add a drink</button>`;
+  h+=`<div class="day-total"><span class="lbl">Day total</span><span class="val">${fmt(total)} <small>standard drinks</small></span></div>`;
+  h+=`<div class="btn-row"><button class="btn ghost" id="dayDone">Done</button></div>`;
+  document.getElementById('daySheet').innerHTML=h;
+  document.getElementById('addDrink').onclick=()=>openDrink(null);
+  document.getElementById('dayDone').onclick=()=>hide('dayOverlay');
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{
+    dayDrinks=dayDrinks.filter(x=>x.id!==b.dataset.del);
+    await writeDay(currentDay,dayDrinks); renderDay();
+  });
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openDrink(b.dataset.edit));
+}
+
+/* ============================ DRINK ENTRY MODAL ============================ */
+let draft=null;
+function openDrink(id){
+  if(id){ draft={...dayDrinks.find(x=>x.id===id)}; }
+  else { draft={id:'d'+Date.now()+Math.floor(Math.random()*999), type:null, volume:'', unit:'oz', abv:'', servings:'1'}; }
+  renderDrink(); show('drinkOverlay');
+}
+function drinkStdPreview(){
+  const v=parseFloat(draft.volume), a=parseFloat(draft.abv), s=parseFloat(draft.servings);
+  if(!(v>0)||!(a>0)||!(s>0)||!draft.type) return null;
+  return computeStd(v,draft.unit,a,s);
+}
+function renderDrink(){
+  const std=drinkStdPreview();
+  const ready = std!==null;
+  let h=`<div class="grab"></div><h2>${draft && dayDrinks.some(x=>x.id===draft.id)?'Edit drink':'Add a drink'}</h2>
+    <div class="date-sub">Pick a type, then enter the details.</div>`;
+  // type
+  h+=`<div class="field"><div class="flabel">Type</div><div class="type-grid">`;
+  TYPES.forEach(t=>{ h+=`<div class="type-btn ${draft.type===t.key?'sel':''}" data-type="${t.key}"><span class="te">${t.emoji}</span><span class="tn">${t.name}</span></div>`; });
+  h+=`</div></div>`;
+  // volume + unit
+  h+=`<div class="field"><div class="flabel">Volume</div><div class="vol-line">
+      <input class="num-field" id="fVol" inputmode="decimal" placeholder="0" value="${draft.volume}">
+      <div class="unit-toggle">
+        <button data-unit="oz" class="${draft.unit==='oz'?'on':''}">oz</button>
+        <button data-unit="ml" class="${draft.unit==='ml'?'on':''}">mL</button>
+      </div></div></div>`;
+  // abv + servings
+  h+=`<div class="row2">
+      <div class="field" style="margin-bottom:0"><div class="flabel">Alcohol %</div>
+        <input class="num-field" id="fAbv" inputmode="decimal" placeholder="0" value="${draft.abv}"></div>
+      <div class="field" style="margin-bottom:0"><div class="flabel">Servings</div>
+        <input class="num-field" id="fServ" inputmode="decimal" placeholder="1" value="${draft.servings}"></div>
+    </div>`;
+  h+=`<div class="calc" style="margin-top:16px"><span class="cl">Standard drinks</span>
+      <span class="cv">${ready?fmt(std):'—'} <small>${ready?'std':'enter details'}</small></span></div>`;
+  h+=`<div class="btn-row">
+      <button class="btn ghost" id="drinkCancel">Cancel</button>
+      <button class="btn primary" id="drinkSave" ${ready?'':'disabled'}>Save drink</button></div>`;
+  document.getElementById('drinkSheet').innerHTML=h;
+
+  document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{draft.type=b.dataset.type;renderDrink();});
+  document.querySelectorAll('[data-unit]').forEach(b=>b.onclick=()=>{
+    draft.volume=document.getElementById('fVol').value; draft.abv=document.getElementById('fAbv').value; draft.servings=document.getElementById('fServ').value;
+    draft.unit=b.dataset.unit; renderDrink();
+  });
+  const vol=document.getElementById('fVol'), abv=document.getElementById('fAbv'), serv=document.getElementById('fServ');
+  function sync(){ draft.volume=vol.value; draft.abv=abv.value; draft.servings=serv.value; liveCalc(); }
+  [vol,abv,serv].forEach(inp=>inp.addEventListener('input',sync));
+  function liveCalc(){
+    const s=drinkStdPreview(), r=s!==null;
+    document.querySelector('.calc .cv').innerHTML=`${r?fmt(s):'—'} <small>${r?'std':'enter details'}</small>`;
+    document.getElementById('drinkSave').disabled=!r;
+  }
+  document.getElementById('drinkCancel').onclick=()=>hide('drinkOverlay');
+  document.getElementById('drinkSave').onclick=async()=>{
+    draft.volume=parseFloat(vol.value); draft.abv=parseFloat(abv.value); draft.servings=parseFloat(serv.value);
+    draft.std=computeStd(draft.volume,draft.unit,draft.abv,draft.servings);
+    const i=dayDrinks.findIndex(x=>x.id===draft.id);
+    if(i>=0) dayDrinks[i]=draft; else dayDrinks.push(draft);
+    await writeDay(currentDay,dayDrinks);
+    hide('drinkOverlay'); renderDay();
+  };
+}
+
+/* ============================ WEEK / SETTINGS / INFO ============================ */
+function openWeekHealth(ds){
+  document.getElementById('weekSheet').innerHTML=`<div class="grab"></div><h2>Weekly health insight</h2>${renderWeekCard(ds,new Date(),true)}`;
+  show('weekOverlay');
+}
+function openSettings(){
+  let h=`<div class="grab"></div><h2>Settings</h2><div class="date-sub">Adjust your weekly goals.</div>`;
+  h+=`<div class="set-row"><div><div class="sl">Weekly standard-drink cap</div><div class="sd">Your target ceiling per week</div></div>
+      <input class="set-num" id="setCap" type="number" inputmode="decimal" min="0" step="1" value="${settings.weeklyCap}"></div>`;
+  h+=`<div class="set-row"><div><div class="sl">Dry days per week</div><div class="sd">Alcohol-free days you aim for</div></div>
+      <input class="set-num" id="setDry" type="number" inputmode="numeric" min="0" max="7" step="1" value="${settings.dryTarget}"></div>`;
+  h+=`<div class="btn-row"><button class="btn primary" id="setSave">Save settings</button></div>`;
+  h+=`<div class="btn-row"><button class="btn ghost" id="signOut">Sign out</button></div>`;
+  h+=`<div class="who">${auth.currentUser?auth.currentUser.email||'':''}</div>`;
+  document.getElementById('setSheet').innerHTML=h;
+  document.getElementById('setSave').onclick=async()=>{
+    settings.weeklyCap=Math.max(0,parseFloat(document.getElementById('setCap').value)||0);
+    settings.dryTarget=Math.max(0,Math.min(7,parseInt(document.getElementById('setDry').value)||0));
+    await writeSettings(); hide('setOverlay'); render();
+  };
+  document.getElementById('signOut').onclick=()=>signOut(auth);
+  show('setOverlay');
+}
+function openInfo(){
+  let h=`<div class="grab"></div><h2>About Pour</h2>`;
+  h+=`<p class="intro">A private log for tracking and visualizing your drinking, synced to your Google account. Tap any day to log drinks, and tap a week's colored strip to see what that week's total means for your health.</p>`;
+  h+=`<div style="margin:6px 0 4px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint)">One standard drink = 13.45 g alcohol</div>`;
+  h+=`<div style="font-size:12.5px;color:var(--ink-faint);margin-bottom:8px">Canada / CCSA. For reference, these each equal one:</div>`;
+  h+=`<div class="ref-item"><div class="e">🍺</div><div><div class="rt">Beer</div><div class="rd">341 mL @ 5%</div></div></div>`;
+  h+=`<div class="ref-item"><div class="e">🍷</div><div><div class="rt">Wine</div><div class="rd">142 mL @ 12%</div></div></div>`;
+  h+=`<div class="ref-item"><div class="e">🥃</div><div><div class="rt">Spirits</div><div class="rd">43 mL @ 40%</div></div></div>`;
+  h+=`<div style="margin:18px 0 4px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint)">Weekly risk colors</div>`;
+  [['green','Low · 0–2 / week','Likely to avoid most consequences.'],['yellow','Moderate · 3–6 / week','Cancer risk begins to rise.'],['orange','Increasingly high · 7–14 / week','Heart and stroke risk climbs with each drink.'],['red','High · 15+ / week','Serious harm risk, rising steeply.']].forEach(r=>{
+    h+=`<div class="ref-item"><div class="e"><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:var(--${r[0]})"></span></div><div><div class="rt">${r[1]}</div><div class="rd">${r[2]}</div></div></div>`;
+  });
+  h+=`<div class="disclaimer">Bands and health information are based on Canada's Guidance on Alcohol and Health (CCSA, 2023). Tip: in your phone browser use Share › Add to Home Screen to launch it like an app. General information, not medical advice.</div>`;
+  h+=`<div class="btn-row"><button class="btn primary" id="infoClose">Got it</button></div>`;
+  document.getElementById('infoSheet').innerHTML=h;
+  document.getElementById('infoClose').onclick=()=>hide('infoOverlay');
+  show('infoOverlay');
+}
+
+/* ============================ BINDINGS ============================ */
+function show(id){document.getElementById(id).classList.add('show');document.body.style.overflow='hidden';}
+function hide(id){document.getElementById(id).classList.remove('show');document.body.style.overflow='';}
+['dayOverlay','drinkOverlay','weekOverlay','setOverlay','infoOverlay'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)hide(id);});
+});
+function bindMonth(weeks){
+  document.getElementById('prevM').onclick=()=>{viewMonth--;if(viewMonth<0){viewMonth=11;viewYear--;}render();};
+  document.getElementById('nextM').onclick=()=>{viewMonth++;if(viewMonth>11){viewMonth=0;viewYear++;}render();};
+  document.getElementById('todayM').onclick=()=>{const t=new Date();viewYear=t.getFullYear();viewMonth=t.getMonth();render();};
+  document.getElementById('setBtn').onclick=openSettings;
+  document.getElementById('infoBtn').onclick=openInfo;
+  document.querySelectorAll('.cell').forEach(c=>c.onclick=()=>openDay(c.dataset.date));
+  document.querySelectorAll('.band').forEach(b=>b.onclick=()=>openWeekHealth(weeks[parseInt(b.dataset.week)]));
+  const oh=document.getElementById('openHealth');
+  if(oh) oh.onclick=()=>openWeekHealth(weeks[pickWeek(weeks,new Date())]);
+}
+
+/* ============================ AUTH / INIT ============================ */
+function showScreen(which){
+  ['setupScreen','authScreen','appScreen'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  document.getElementById(which).classList.remove('hidden');
+  document.getElementById('fabBtn').classList.toggle('hidden', which!=='appScreen');
+}
+async function startGoogle(){
+  const provider=new GoogleAuthProvider();
+  try{ await signInWithPopup(auth,provider); }
+  catch(e){ try{ await signInWithRedirect(auth,provider); }catch(e2){ alert('Sign-in failed: '+e2.message); } }
+}
+(function main(){
+  if(NEEDS_SETUP){ showScreen('setupScreen'); return; }
+  const app=initializeApp(firebaseConfig);
+  auth=getAuth(app);
+  db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
+  document.getElementById('googleBtn').onclick=startGoogle;
+  getRedirectResult(auth).catch(()=>{});
+  onAuthStateChanged(auth, user=>{
+    if(user){
+      uid=user.uid;
+      const t=new Date(); viewYear=t.getFullYear(); viewMonth=t.getMonth();
+      showScreen('appScreen');
+      document.getElementById('appScreen').innerHTML=`<div class="loading">Loading your log…</div>`;
+      subscribe();
+      setTimeout(render, 400);
+      document.getElementById('fabBtn').onclick=()=>openDay(key(new Date()));
+    } else {
+      uid=null; showScreen('authScreen');
+    }
+  });
+})();
+</script>
+</body>
+</html>
